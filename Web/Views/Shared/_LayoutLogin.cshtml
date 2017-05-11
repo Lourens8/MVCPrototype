@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/custom.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="/" class="site_title"><span>Leave</span></a>
+                    </div>
+                </div>
+            </div>
+            <!-- page content -->
+            <div class="right_col" role="main" style="min-height: 1161px;">
+                <div class="">
+                    
+
+                        <div class="clearfix"></div>
+
+                        <div class="col-md-offset-4 col-md-4 col-sm-offset-4 col-sm-4 col-xs-offset-4 col-xs-4">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /page content -->
+            <!-- footer content -->
+            <footer>
+                <div class="pull-right">
+                    Leave Protoype - For Demo
+                </div>
+                <div class="clearfix"></div>
+            </footer>
+            <!-- /footer content -->
+        </div>
+
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Content/custom.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,196 @@
+﻿@using Web.Models
+@model LeaveList
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<div class="x_panel">
+    <div class="x_title">
+        <h2>Leave Balances</h2>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+
+        <p>Click to request</p>
+        <!-- start pop-over -->
+        <div class="bs-example-popovers" data-bind="foreach: CurrentLeave">
+            <button type="button" data-toggle="modal" data-target=".leave_popup" class="btn btn-default" data-toggle="tooltip" data-placement="left" data-bind="text: parseInt(RunningTotal) + ' ' + TypeName, click: function(){ $parent.Add(TypeName)}"></button>
+        </div>
+        <!-- end pop-over -->
+
+    </div>
+</div>
+
+<div class="x_panel">
+
+    <div class="x_title">
+        <h2>Leave Lists</h2>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2">Show Leave For:</label>
+            <div class="col-md-6">
+                <select class="form-control" data-bind="options: UserLeaves, optionsText: 'Name', optionsValue: 'UserID', value: LeaveType, optionsCaption: 'Myself', value: UserID"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Leave Type:</label>
+            <div class="col-md-6">
+                <select class="form-control" data-bind="options: LeaveTypes, value: LeaveType, optionsCaption: 'All'"></select>
+            </div>
+        </div>
+    </div>
+
+    <div class="x_content">
+
+        <div class="" role="tabpanel">
+            <ul class="nav nav-tabs bar_tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a data-bind="click: FilterMyLeave" href="#" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">My Leave</a>
+                </li>
+                <li role="presentation">
+                    <a data-bind="click: FilterManage" href="#" role="tab" data-toggle="tab" aria-expanded="false">
+                        Manage Leave
+                        <!-- ko if: ToApprove() > 0 -->
+                        <span data-bind="text: ToApprove()" class="badge bg-red">6</span>
+                        <!-- /ko -->
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a data-bind="click: FilterHistory" href="#" role="tab" data-toggle="tab" aria-expanded="false">History</a>
+                </li>
+                <li role="presentation">
+                    <a data-bind="click: FilterFuture" href="#" role="tab" data-toggle="tab" aria-expanded="false">Future</a>
+                </li>
+            </ul>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped jambo_table bulk_action">
+
+                <thead>
+                    <tr class="headings">
+                        <th data-bind="css: {hidden: !Manage()}" data class="column-title">User</th>
+                        <th class="column-title">State</th>
+                        <th class="column-title">Description</th>
+                        <th class="column-title">Date</th>
+                        <th class="column-title">Amount</th>
+                        <th class="column-title">Balance</th>
+                        <th class="column-title"></th>
+                    </tr>
+                </thead>
+
+                <tbody data-bind="foreach: FilteredLeaves">
+                    <tr data-bind="css:{green_line: IsCurrent}">
+                        <td data-bind="text: Name, css:{hidden: !$parent.Manage()}"></td>
+                        <td data-bind="text: LeaveStateID == 1 ? 'Pending' : LeaveStateID == 2 ? 'Approved' : LeaveStateID == 0 ? 'System' : 'Denied'"></td>
+                        <td data-bind="text: Description"></td>
+                        <td data-bind="text: new moment(StartDate).format('DD MMMM YYYY') + ' - ' + new moment(EndDate).format('DD MMMM YYYY')"></td>
+                        <td data-bind="text: parseInt(Amount)"></td>
+                        <td data-bind="text: parseInt(RunningTotal)"></td>
+                        <td>
+                            <a data-bind="css:{hidden: LeaveID == 0}, click:$parent.Edit" data-toggle="modal" data-target=".leave_popup">Edit</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade leave_popup bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel2" data-bind="text: 'Request ' + LeaveType()"></h4>
+            </div>
+            <form data-bind="attr: { action: '/' + LeaveType() + 's/' + (FormLeave().LeaveID > 0 ? 'Edit' : 'Create')}" method="post">
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <input type="hidden" name="UserID" data-bind="value: FormLeave().UserID" />
+                        <input type="hidden" name="LeaveID" data-bind="value: FormLeave().LeaveID" />
+                        <input type="hidden" name="RequestDate" data-bind="value: FormLeave().RequestDate" />
+                        <input type="hidden" name="StartDate" data-bind="value: FormLeave().StartDate" />
+                        <input type="hidden" name="EndDate" data-bind="value: FormLeave().EndDate" />
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="DateRange">Date Range</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="DateRange" data_bind="value:new moment(FormLeave().StartDate).format('YYYY-MM-DD') + ' - ' + new moment(FormLeave().EndDate).format('YYYY-MM-DD')" />
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-bind="css:{hidden: FormLeave().UserID == DefaultLeave().UserID}">
+                            @Html.LabelFor(model => model.FormModel.LeaveStateID, "LeaveStateID", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownList("LeaveStateID", null, htmlAttributes: new { @class = "form-control", data_bind = "value: FormLeave().LeaveStateID, attr:{name: 'LeaveStateID'}" })
+                                @Html.ValidationMessageFor(model => model.FormModel.LeaveStateID, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-bind="css:{hidden: LeaveType() != 'MedicalLeave'}">
+                            @Html.LabelFor(model => model.FormModel.Attachement, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.FormModel.Attachement, new { htmlAttributes = new { @class = "form-control", type = "file", data_bind = "value: FormLeave().Attachement, attr:{name: 'Attachement'}" } })
+                                @Html.ValidationMessageFor(model => model.FormModel.Attachement, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-bind="css:{hidden: LeaveType() != 'StudyLeave'}">
+                            @Html.LabelFor(model => model.FormModel.StudentNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.FormModel.StudentNumber, new { htmlAttributes = new { @class = "form-control", data_bind = "value: FormLeave().StudentNumber, attr:{name: 'StudentNumber'}" } })
+                                @Html.ValidationMessageFor(model => model.FormModel.StudentNumber, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-bind="css:{hidden: LeaveType() != 'StudyLeave'}">
+                            @Html.LabelFor(model => model.FormModel.Institution, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.FormModel.Institution, new { htmlAttributes = new { @class = "form-control", data_bind = "value: FormLeave().Institution, attr:{name: 'Institution'}" } })
+                                @Html.ValidationMessageFor(model => model.FormModel.Institution, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-bind="text: FormLeave().LeaveID == 0 ? 'Request' : 'Update'">Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        var LeaveList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        function DefaultLeave()
+        {
+            return @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.FormModel));
+        }
+    </script>
+
+    <script src="~/Scripts/LeaveViewModel.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/daterangepicker.js"></script>
+
+    <script type="text/javascript">
+        $("#DateRange").daterangepicker({
+            locale: {
+                format: 'YYYY-MM-DD'
+            }
+        }, function(a, b, c) {
+            $('[name=StartDate]').val(a.format('YYYY-MM-DD'));
+            $('[name=EndDate]').val(b.format('YYYY-MM-DD'));
+        })
+    </script>
+}

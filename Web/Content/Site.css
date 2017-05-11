@@ -1,0 +1,75 @@
+﻿@media (min-width: 1200px) {
+    .container {
+        /* width: 1170px; */
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        /* width: 970px; */
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        /* width: 750px; */
+    }
+}
+
+.nav li:hover
+{
+    background-color:grey
+}
+
+.button_list a
+{
+    width:174px;
+}
+
+.green_line td
+{
+    background-color: #b3d6ff;
+    color:#0d150d;
+}
+
+/*.approved td
+{
+    background-color: #88e888;
+    color:#0d150d;
+}
+
+.pending td
+{
+    background-color: #f1d140;
+    color:#0d150d;
+}
+
+.denied td
+{
+    background-color: #ff8181;
+    color:#0d150d;
+}
+
+.green_line td:hover 
+{
+    background-color: #9999ff;
+    color:#0d150d;
+}
+
+.approved td:hover
+{
+    background-color: #88e888;
+    color:#0d150d;
+}
+
+.pending td:hover
+{
+    background-color: #f1d140;
+    color:#0d150d;
+}
+
+.denied td:hover
+{
+    background-color: #ff8181;
+    color:#0d150d;
+}*/

@@ -1,0 +1,22 @@
+﻿@using Web.Models
+@model List<ApplicationUser>
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+
+<div class="x_panel">
+    <div class="x_title">
+        <h2>Choose an account to log in</h2>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content button_list text-center">
+
+        @foreach (ApplicationUser user in Model)
+        {
+            <a role="button" class="btn btn-primary" href="/Account/LoginWithId/@user.Id">@user.FullName</a> <br />
+        }
+
+    </div>
+</div>
